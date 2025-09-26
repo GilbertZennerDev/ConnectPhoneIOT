@@ -38,7 +38,8 @@ class Space:
 		except Exception as e:
 			print(e); exit()
 		if c_badrange(self.startid) or c_badrange(self.searchedid) or c_distance(self.distance):
-			print('Bad Input'); exit()	
+			print('Bad Input'); exit()
+
 	def addphones(self):
 		self.phones = [Phone(i, random.randint(0, self.limx), random.randint(0, self.limy)) for i in range(self.phonescount)]
 
@@ -89,7 +90,7 @@ class Phone:
         return self.id, self.pos['x'], self.pos['y']
 
 def run():
-	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'); exit()
+	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance', 'limx', 'limy'); exit()
 	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
 run()
 
