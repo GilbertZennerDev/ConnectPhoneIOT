@@ -70,8 +70,6 @@ class Phone:
         return self.startid, self.pos['x'], self.pos['x']
 
 def run():
-	if len(sys.argv) != 5:
-		print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'), exit()
-	#space = Space(10000, random.randint(0, 10000), random.randint(0, 10000), 1000)
+	if len(sys.argv) != 5: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'), exit()
 	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
 run()
