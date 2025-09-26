@@ -13,15 +13,16 @@
 import random, math, sys
 
 class Space:
-	def __init__(self, phonescount, startid, searchedid, distance):
+	def __init__(self, phonescount, startid, searchedid, distance, limx, limy):
 		self.startid = 	startid
 		self.searchedid = searchedid
 		self.phonescount = phonescount
 		self.distance = distance
+		self.limx = limx
+		self.limy = limy
 		self.iters = 0
 		self.checks()
-		self.addphones(100, 100)
-#		self.startphone = self.phones[startid]
+		self.addphones()
 		self.trackpath()
 
 	def checks(self):
@@ -32,12 +33,14 @@ class Space:
 			self.searchedid = int(self.searchedid)
 			self.phonescount = int(self.phonescount)
 			self.distance = int(self.distance)
+			self.limx = int(self.limx)
+			self.limy = int(self.limy)
 		except Exception as e:
 			print(e); exit()
 		if c_badrange(self.startid) or c_badrange(self.searchedid) or c_distance(self.distance):
 			print('Bad Input'); exit()	
-	def addphones(self, xlim, ylim):
-		self.phones = [Phone(i, random.randint(0, xlim), random.randint(0, ylim)) for i in range(self.phonescount)]
+	def addphones(self):
+		self.phones = [Phone(i, random.randint(0, self.limx), random.randint(0, self.limy)) for i in range(self.phonescount)]
 
 	def gooddistance(self, currentphone, nearphone):
 		x = nearphone.pos['x'] - currentphone.pos['x']
@@ -86,8 +89,8 @@ class Phone:
         return self.id, self.pos['x'], self.pos['y']
 
 def run():
-	if len(sys.argv) != 5: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'); exit()
-	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'); exit()
+	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
 run()
 
 '''
