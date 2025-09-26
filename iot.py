@@ -18,6 +18,7 @@ class Space:
 		self.searchedid = searchedid
 		self.phonescount = phonescount
 		self.distance = distance
+		self.iters = 0
 		self.checks()
 		self.addphones()
 		self.trackpath()
@@ -32,22 +33,26 @@ class Space:
 			self.distance = int(self.distance)
 		except Exception as e:
 			print(e), exit()
-		if c_badrange(self.startid) or c_badrange(self.searchedid):
-			print('Bad Ids'), exit()
-		if c_distance(self.distance):
-			print('Bad Distance'), exit()
+		if c_badrange(self.startid) or c_badrange(self.searchedid) or c_distance(self.distance):
+			print('Bad Input'), exit()	
 	def addphones(self):
 		self.phones = [Phone(i) for i in range(self.phonescount)] 
 
 	def trackpath(self):
-		near = lambda phone: abs(self.phones[self.startid].pos['x'] - phone.pos['x']) < self.distance and abs(self.phones[self.startid].pos['y'] - phone.pos['y']) < self.distance
-		self.nearbyphones = set([phone for phone in self.phones if near(phone)])
-		self.check_phone_in_neighbours()
+		near = lambda currentphone, startphone: abs(startphone.pos['x'] - currentphone.pos['x']) < self.distance or abs(startphone.pos['y'] - currentphone.pos['y']) < self.distance
+		self.nearbyphones = []
+		startphone = self.phones[self.startid]
+		while not self.check_phone_in_neighbours():
+			self.nearbyphones = set([phone for phone in self.phones if near(phone, startphone)])
+			self.iters += 1
+			print(self.nearbyphones)
 
-	def check_phone_in_neighbours(self):
+	def check_phone_in_neighbours(self):			
 		ids = [phone.id for phone in self.nearbyphones]
 		for phone in self.nearbyphones:
 			if phone.id == self.startid: self.find_phone(), exit()
+		if len(self.nearbyphones) >= self.phonescount:
+			print('Phone not found'), exit()
 	    
 	def getphonedata(self, searchedid):
 		for phone in self.phones:
@@ -57,7 +62,7 @@ class Space:
 	def find_phone(self):
 		id1, pos1x, pos1y = self.getphonedata(self.startid)
 		id2, pos2x, pos2y = self.getphonedata(self.searchedid)
-		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y)
+		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y, 'Iterations:', self.iters)
 
 class Phone:
     def __init__(self, id):
@@ -70,3 +75,15 @@ def run():
 	if len(sys.argv) != 5: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'), exit()
 	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
 run()
+
+'''
+distance = 500
+near = lambda currentphone, startphone: abs(startphone.pos['x'] - currentphone.pos['x']) < distance or abs(startphone.pos['y'] - currentphone.pos['y']) < distance
+p1 = Phone(1)
+p2 = Phone(2)
+id1, pos1x, pos1y = p1.sendpos()
+id2, pos2x, pos2y = p2.sendpos()
+print(id1, pos1x, pos1y)
+print(id2, pos2x, pos2y)
+print(near(p1, p2))
+'''
