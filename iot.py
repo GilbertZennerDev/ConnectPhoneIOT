@@ -13,9 +13,9 @@
 import random, math, sys
 
 class Space:
-	def __init__(self, phonescount, startid, searchedid, distance, limx, limy):
+	def __init__(self, phonescount, startid, endid, distance, limx, limy):
 		self.startid = 	startid
-		self.searchedid = searchedid
+		self.endid = endid
 		self.phonescount = phonescount
 		self.distance = distance
 		self.limx = limx
@@ -30,14 +30,14 @@ class Space:
 		c_distance = lambda distance: distance < 0
 		try:
 			self.startid = int(self.startid)
-			self.searchedid = int(self.searchedid)
+			self.endid = int(self.endid)
 			self.phonescount = int(self.phonescount)
 			self.distance = int(self.distance)
 			self.limx = int(self.limx)
 			self.limy = int(self.limy)
 		except Exception as e:
 			print(e); exit()
-		if c_badrange(self.startid) or c_badrange(self.searchedid) or c_distance(self.distance):
+		if c_badrange(self.startid) or c_badrange(self.endid) or c_distance(self.distance):
 			print('Bad Input'); exit()
 
 	def addphones(self):
@@ -67,19 +67,19 @@ class Space:
 
 	def check_phone_in_neighbours(self):			
 		ids = [phone.id for phone in self.nearbyphones]
-		if self.searchedid in ids: self.find_phone(); exit()
+		if self.endid in ids: self.find_phone(); exit()
 		if len(self.nearbyphones) >= self.phonescount:
 			print('Phone not found'); exit()
 	    
-	def getphonedata(self, searchedid):
+	def getphonedata(self, endid):
 		for phone in self.phones:
 			id, posx, posy = phone.sendpos()
-			if id == searchedid: return id, posx, posy
+			if id == endid: return id, posx, posy
 
 	def find_phone(self):
 		print('finding phone')
 		id1, pos1x, pos1y = self.getphonedata(self.startid)
-		id2, pos2x, pos2y = self.getphonedata(self.searchedid)
+		id2, pos2x, pos2y = self.getphonedata(self.endid)
 		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y, 'Iterations:', self.iters)
 
 class Phone:
@@ -90,7 +90,7 @@ class Phone:
         return self.id, self.pos['x'], self.pos['y']
 
 def run():
-	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance', 'limx', 'limy'); exit()
+	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'endid', 'connectiondistance', 'limx', 'limy'); exit()
 	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
 run()
 
