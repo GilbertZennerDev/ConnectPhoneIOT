@@ -20,7 +20,7 @@ class Space:
 		self.distance = distance
 		self.iters = 0
 		self.checks()
-		self.addphones(100, 1000)
+		self.addphones(100, 100)
 #		self.startphone = self.phones[startid]
 		self.trackpath()
 
@@ -50,18 +50,20 @@ class Space:
 		return False
 
 	def trackpath(self):
-		startphone = self.phones[self.startid]
-		self.nearbyphones = [startphone]
-		while not self.check_phone_in_neighbours():
+		samelen = lambda : len(self.nearbyphones) <= len(self.phones)
+		self.nearbyphones = [self.phones[self.startid]]
+		while not self.check_phone_in_neighbours() and samelen():
 			self.iters += 1
 			print(self.iters)
-			for currentphone in self.phones:
-				if currentphone not in self.nearbyphones and self.near(currentphone): self.nearbyphones.append(currentphone)
+			newnearphones = [phone for phone in self.phones if phone not in self.nearbyphones and self.near(phone)]
+			print('newphones', len(newnearphones))
+			if not len(newnearphones) and not self.check_phone_in_neighbours():
+				print('No new phones reachable and searched phone cannot be found'); exit()
+			self.nearbyphones += newnearphones
 
 	def check_phone_in_neighbours(self):			
 		ids = [phone.id for phone in self.nearbyphones]
-		for phone in self.nearbyphones:
-			if phone.id == self.searchedid: self.find_phone(); exit()
+		if self.searchedid in ids: self.find_phone(); exit()
 		if len(self.nearbyphones) >= self.phonescount:
 			print('Phone not found'); exit()
 	    
