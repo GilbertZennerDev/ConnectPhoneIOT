@@ -40,17 +40,14 @@ class Space:
 		self.phones = [Phone(i) for i in range(self.phonescount)] 
 
 	def trackpath(self):
-		self.getneighbours()
-
-	def getneighbours(self):
 		near = lambda phone: abs(self.phones[self.startid].pos['x'] - phone.pos['x']) < self.distance and abs(self.phones[self.startid].pos['y'] - phone.pos['y']) < self.distance
 		self.nearbyphones = set([phone for phone in self.phones if near(phone)])
 		self.check_phone_in_neighbours()
 
 	def check_phone_in_neighbours(self):
+		ids = [phone.id for phone in self.nearbyphones]
 		for phone in self.nearbyphones:
-			if phone.startid == self.startid: self.find_phone(), exit()
-		return False
+			if phone.id == self.startid: self.find_phone(), exit()
 	    
 	def getphonedata(self, searchedid):
 		for phone in self.phones:
@@ -63,11 +60,11 @@ class Space:
 		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y)
 
 class Phone:
-    def __init__(self, startid):
-        self.startid = startid
+    def __init__(self, id):
+        self.id = id
         self.pos = {'x': random.randint(0, 1000), 'y': random.randint(0, 1000)}
     def sendpos(self):
-        return self.startid, self.pos['x'], self.pos['x']
+        return self.id, self.pos['x'], self.pos['x']
 
 def run():
 	if len(sys.argv) != 5: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'), exit()
