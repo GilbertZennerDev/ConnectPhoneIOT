@@ -26,7 +26,10 @@ class Space:
 		c_badrange = lambda value: value < 0 or value >= self.phonescount 
 		c_distance = lambda distance: distance < 0
 		try:
-			int(self.startid), int(self.searchedid), int(self.phonescount), int(self.distance)
+			self.startid = int(self.startid)
+			self.searchedid = int(self.searchedid)
+			self.phonescount = int(self.phonescount)
+			self.distance = int(self.distance)
 		except Exception as e:
 			print(e), exit()
 		if c_badrange(self.startid) or c_badrange(self.searchedid):
@@ -66,4 +69,9 @@ class Phone:
     def sendpos(self):
         return self.startid, self.pos['x'], self.pos['x']
 
-space = Space(10000, random.randint(0, 10000), random.randint(0, 10000), 1000)
+def run():
+	if len(sys.argv) != 5:
+		print('Usage:', sys.argv[0], 'phonecount', 'startid', 'searchedid', 'connectiondistance'), exit()
+	#space = Space(10000, random.randint(0, 10000), random.randint(0, 10000), 1000)
+	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+run()
