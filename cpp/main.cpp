@@ -1,30 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IOT.cpp                                            :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gzenner <gzenner@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/25 17:01:48 by gzenner           #+#    #+#             */
-/*   Updated: 2025/11/25 17:08:23 by gzenner          ###   ########.fr       */
+/*   Created: 2025/11/25 16:53:44 by gzenner           #+#    #+#             */
+/*   Updated: 2025/11/25 17:06:28 by gzenner          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "IOT.hpp"
 
-void IOT::test()
+int main(int ac, char **av)
 {
-    std::cout << "Test successful.\n";
-}
-
-void IOT::initPhones(char **av)
-{
-    unsigned int limit = atoi(av[1]);
-    unsigned int i;
-
-    while (i < limit)
-    {
-        IOT::Phones.push_back(new Phone());
-        ++i;
-    }
+    IOT iot = IOT(av);
+    iot.test();
+    return (0);
 }

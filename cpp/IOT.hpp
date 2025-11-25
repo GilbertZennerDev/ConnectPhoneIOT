@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IOT.cpp                                            :+:      :+:    :+:   */
+/*   IOT.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gzenner <gzenner@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/25 17:01:48 by gzenner           #+#    #+#             */
-/*   Updated: 2025/11/25 17:08:23 by gzenner          ###   ########.fr       */
+/*   Created: 2025/11/25 16:55:19 by gzenner           #+#    #+#             */
+/*   Updated: 2025/11/25 17:08:40 by gzenner          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "IOT.hpp"
+#include <vector>
+#include <iostream>
 
-void IOT::test()
+class Phone
 {
-    std::cout << "Test successful.\n";
-}
+    unsigned int    id;
+    double          pos[2];
+};
 
-void IOT::initPhones(char **av)
+class IOT
 {
-    unsigned int limit = atoi(av[1]);
-    unsigned int i;
-
-    while (i < limit)
-    {
-        IOT::Phones.push_back(new Phone());
-        ++i;
-    }
-}
+    std::vector<Phone*> Phones;
+    public:
+        void initPhones(char **);
+        void test();
+};

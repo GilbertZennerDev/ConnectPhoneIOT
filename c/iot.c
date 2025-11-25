@@ -23,13 +23,14 @@ void	ft_init_space(t_space *space, char **av)
 	space->iters = 0;
 }
 
-void	ft_init_phones(t_phone **phones, t_space space)
+void	ft_init_phones(t_phone **phones, t_phone **nearphones, t_space space)
 {
 	unsigned int	i;
 
 	*phones = malloc(sizeof(t_phone) * space.phonescount);
 	if (!phones)
 		return ;
+	*nearphones = malloc(sizeof(t_phone) * space.phonescount);
 	i = 0;
 	while (i < space.endid + 1)
 	{
@@ -37,9 +38,11 @@ void	ft_init_phones(t_phone **phones, t_space space)
 		(*phones)[i].pos[0] = random() % space.limx;
 		(*phones)[i].pos[1] = random() % space.limy;
 		(*phones)[i].is_near = false;
+		(*nearphones)[i].id = 999999;
 		++i;
 	}
 	(*phones)[space.startid].is_near = true;
+	(*phones)[space.endid].is_near = true;
 }
 
 /*
@@ -59,22 +62,6 @@ def trackpath(self):
 bool	ft_get_distance(double xp1, double xp2, double yp1, double yp2, t_space space)
 {
 	return (sqrt((yp1 - yp2)*(yp1 - yp2) + (xp1 - xp2)*(xp1 - xp2)) < space.connectiondistance);
-}
-
-void	ft_add_nearphones(t_phone **phones, unsigned int count)
-{
-	unsigned int	i;
-	unsigned int	j;
-
-	i = 0;
-	while (i < count)
-	{
-		/*if (ft_get_distance())
-		{
-
-		}*/
-		++i;
-	}
 }
 
 bool	check_phone_in_neighbours(t_phone **phones, unsigned int count, unsigned int endid)
@@ -110,7 +97,7 @@ bool	searched_phone_found(t_phone *phones, unsigned int count, unsigned int sear
 	}
 }
 
-void	add_near_phones(t_phone **phones, unsigned int count, t_space space)
+void	add_near_phones(t_phone **phones, t_phone **nearphones, t_space space)
 {
 	unsigned int	i;
 	unsigned int	j;
@@ -120,7 +107,7 @@ void	add_near_phones(t_phone **phones, unsigned int count, t_space space)
 	double			yp2;
 
 	i = 0;
-	while (i < count)
+	while (i < space.phonescount)
 	{
 		printf("Debug i %d.\n", i);
 		if ((*phones)[i].is_near)
@@ -139,13 +126,12 @@ void	add_near_phones(t_phone **phones, unsigned int count, t_space space)
 					{
 						(*phones)[j].is_near = true;
 						printf("Added id %d.\n", j);
-						break;
+						//break;
 					}
 				}
 				++j;
 			}
 		}
-		
 		++i;
 	}
 }
@@ -156,18 +142,23 @@ void	trackpath(t_space space, t_phone **phones)
 	repeat until searched phone is found or no more new phones are reachable
 	the challenge is to determine which phones are not yeat i
 	*/
+
+	nearphones = malloc(sizeof(t_phone *) * space.phonescount);
 	while(!searched_phone_found(*phones, space.phonescount, space.endid))
 	{
-		add_near_phones(phones, space.phonescount, space);
+		add_near_phones(phones, nearphones, space);
 		printf("Searching %d.\n", space.endid);
 		break;	
 	}
+	printf("Phone found!\n");
+	free(newphones);
 }
 			
 int	main(int ac, char **av)
 {
 	t_space space;
 	t_phone *phones;
+	t_phone	*nearphones;
 
 	if (ac != 7)
 	{
@@ -175,7 +166,7 @@ int	main(int ac, char **av)
 		return (0);
 	}
 	ft_init_space(&space, av);
-	ft_init_phones(&phones, space);
+	ft_init_phones(&phones, &nearphones, space);
 	trackpath(space, &phones);
 	free(phones);
 	return (0);

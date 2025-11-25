@@ -6,7 +6,7 @@
 #    By: gzenner <gzenner@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/08/22 15:02:32 by gzenner           #+#    #+#              #
-#    Updated: 2025/11/25 15:31:24 by gzenner          ###   ########.fr        #
+#    Updated: 2025/11/25 16:47:32 by gzenner          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,7 @@ class Space:
 		y = nearphone.pos['y'] - currentphone.pos['y']
 		distance = math.sqrt(x**2+y**2)
 		return distance <= self.distance
+    
 	def near(self, currentphone):
 		for nearphone in self.nearbyphones:
 			if self.gooddistance(currentphone, nearphone): return True
