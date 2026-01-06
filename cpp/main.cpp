@@ -10,24 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-#include "IOT.hpp"
-
-void IOT::test()
-{
-    std::cout << "Test successful.\n";
-}
-
-void IOT::initPhones(char **av)
-{
-	int i;
-    unsigned int limit = atoi(av[1]);    
-
-	i = -1<
-    while (++i < limit)
-        IOT::Phones.push_back(new Phone());
-}
-*/
 
 #include <vector>
 #include <iostream>
@@ -36,36 +18,57 @@ using namespace std;
 
 typedef struct s_pos
 {
-	double x;
-	double y;
+	double	x;
+	double	y;
+	double	z;
 }	t_pos;
 
 class Phone
 {
+	private:
+	unsigned int	id;
+	t_pos			pos;
+	
 	public:
-	Phone(unsigned int _id);
-    unsigned int	id;
-//    t_pos			pos;
-    double          pos[2];
+	Phone(unsigned int _id, unsigned int spread);
+	unsigned int 	getId();
+	t_pos 			getPos();
 };
 
-Phone::Phone(unsigned int _id)
+
+Phone::Phone(unsigned int _id, unsigned int spread)
 {
 	id = _id;
-	pos[0] = rand() % 1000;
-	pos[1] = rand() % 1000;
+	pos.x = rand() % spread;
+	pos.y = rand() % spread;
+	pos.z = rand() % spread;
 }
 
-bool goodDistance(Phone currentphone, Phone nearphone, double distanceLimit)
+unsigned int	Phone::getId()
+{
+	return (id);
+}
+
+t_pos	Phone::getPos()
+{
+	return (pos);
+}
+
+bool	goodDistance(Phone currentphone, Phone nearphone, double distanceLimit)
 {
 		int		x;
 		int		y;
+		int		z;
 		double	distance;
-//		x = nearphone.pos['x'] - currentphone.pos['x']
-//		y = nearphone.pos['y'] - currentphone.pos['y']
-		x = nearphone.pos[0] - currentphone.pos[0];
-		y = nearphone.pos[1] - currentphone.pos[1];
-		distance = (sqrt(x * x + y * y));
+		t_pos	nearPos;
+		t_pos	currentPos;
+
+		nearPos = nearphone.getPos();
+		currentPos = currentphone.getPos();
+		x = nearPos.x - currentPos.x;
+		y = nearPos.y - currentPos.y;
+		z = nearPos.z - currentPos.z;
+		distance = (sqrt(x * x + y * y + z * z));
 		return (distance <= distanceLimit);
 }
 
@@ -75,20 +78,22 @@ bool idInArr(unsigned int id, vector<Phone *> arr)
 
 	i = -1;
 	while (++i < arr.size())
-		if (arr[i]->id == id) return (true);
+		if (arr[i]->getId() == id) return (true);
 	return (false);
 }
 
 bool check_phone_in_neighbours(vector<Phone *> nearbyphones, unsigned int endid)
 {
 	int				i;
+	t_pos			nearPos;
 
 	i = -1;
 	while (++i < nearbyphones.size())
 	{
-		if (nearbyphones[i]->id == endid)
+		if (nearbyphones[i]->getId() == endid)
 		{
-				cout << "Found Phone at " << nearbyphones[i]->pos[0] << " " << nearbyphones[i]->pos[1] << "\n";
+				nearPos = nearbyphones[i]->getPos();
+				cout << "Found Phone at " << nearPos.x << " " << nearPos.y << "\n";
 				return (true);
 		}
 	}
@@ -97,7 +102,10 @@ bool check_phone_in_neighbours(vector<Phone *> nearbyphones, unsigned int endid)
 
 void printPhonePos(Phone phone)
 {
-	cout << "Printing Position:\nid : " << phone.id << " and Pos: " << phone.pos[0] << " " << phone.pos[1] << "\n";
+	t_pos			currentPos;
+
+	currentPos = phone.getPos();
+	cout << "Printing Position:\nid : " << phone.getId() << " and Pos: " << currentPos.x << " " << currentPos.y << " " << currentPos.z << "\n";
 }
 
 bool	nearANYNearPhone(Phone currentPhone, vector<Phone *> nearbyphones, unsigned int maxDistance)
@@ -115,7 +123,7 @@ bool	nearANYNearPhone(Phone currentPhone, vector<Phone *> nearbyphones, unsigned
 	return (false);
 }
 
-void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> phones)
+void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> phones, unsigned int maxDistance)
 {
 		int				i;
 		unsigned int	iters;
@@ -133,7 +141,7 @@ void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> phones)
 			cout << "iteration: " << ++iters << "\n";
 			while (++i < phones.size())
 			{
-				if (!idInArr(phones[i]->id, nearbyphones) && nearANYNearPhone(*phones[i], nearbyphones, 10))
+				if (!idInArr(phones[i]->getId(), nearbyphones) && nearANYNearPhone(*phones[i], nearbyphones, maxDistance))
 				{
 					newphones.push_back(phones[i]);
 				}
@@ -155,20 +163,37 @@ void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> phones)
 		}
 }
 
+void initPhones(int *i, vector<Phone *> *Phones, unsigned int limit, unsigned int spread)
+{
+	*i = -1;
+	while (++(*i) < limit)
+		(*Phones).push_back(new Phone(*i, spread));
+}
+
+void deletePhones(int i, vector<Phone *> *Phones)
+{
+	while (--(i) > -1)
+		delete (*Phones)[i];
+}
+
 int main(int ac, char **av)
 {
 	int					i;
 	unsigned int		limit;
+	unsigned int		spread;
+	unsigned int		endid;
+	unsigned int		maxDistance;
 	vector<Phone *>		Phones;
 
 	i = -1;
 	srand(time(NULL));
-	if (ac != 2) exit(1);
+//	if (ac != 4) exit(1);
 	limit = atoi(av[1]);
-	while (++i < limit)
-		Phones.push_back(new Phone(i));
-	trackpath(0, 2, Phones);
-	while (--i > -1)
-		delete (Phones[i]);
+	spread = atoi(av[2]);
+	endid = atoi(av[3]);
+	maxDistance  = atoi(av[4]);
+	initPhones(&i, &Phones, limit, spread);
+	trackpath(0, endid, Phones, maxDistance);
+	deletePhones(i, &Phones);
     return (0);
 }
