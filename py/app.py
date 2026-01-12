@@ -24,7 +24,7 @@ class Space:
 		self.iters = 0
 		self.checks()
 		self.addphones()
-		self.plotPhones(self.phones)
+		#self.plotPhones(self.phones, 'green')
 		self.trackpath()
 
 	def checks(self):
@@ -98,7 +98,7 @@ class Space:
 		y = [p[2] for p in pos]
 		x_newnear = [phone.sendpos()[1] for phone in self.newnearphones]
 		y_newnear = [phone.sendpos()[2] for phone in self.newnearphones]		
-		plt.scatter(x, y, color = 'black', marker='*')
+		plt.scatter(x, y, color = 'black', marker='.')
 		plt.scatter(x_newnear, y_newnear, color = 'green', marker='+')
 		plt.scatter(x_start, y_start, color = 'blue', marker='$s$')
 		plt.scatter(x_end, y_end, color = 'red',marker='$e$')
