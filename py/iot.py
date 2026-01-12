@@ -10,19 +10,23 @@
 #                                                                              #
 # **************************************************************************** #
 
+#ech fuegen nach farwen um graph sozou: all well eng nei farw
+
 import random, math, sys
+import matplotlib.pyplot as plt
 
 class Space:
-	def __init__(self, phonescount, startid, endid, distance, limx, limy):
+	def __init__(self, phonescount, startid, endid, distance, spread):
 		self.startid = 	startid
 		self.endid = endid
 		self.phonescount = phonescount
 		self.distance = distance
-		self.limx = limx
-		self.limy = limy
+		self.limx = spread
+		self.limy = spread
 		self.iters = 0
 		self.checks()
 		self.addphones()
+		#self.plotPhones(self.phones, 'green')
 		self.trackpath()
 
 	def checks(self):
@@ -60,11 +64,13 @@ class Space:
 		while not self.check_phone_in_neighbours() and samelen():
 			self.iters += 1
 			print(self.iters)
-			newnearphones = [phone for phone in self.phones if phone not in self.nearbyphones and self.near(phone)]
-			print('newphones', len(newnearphones))
-			if not len(newnearphones) and not self.check_phone_in_neighbours():
+			self.newnearphones = [phone for phone in self.phones if phone not in self.nearbyphones and self.near(phone)]
+			print('newphones', len(self.newnearphones))
+			if not len(self.newnearphones) and not self.check_phone_in_neighbours():
 				print('No new phones reachable and searched phone cannot be found'); exit()
-			self.nearbyphones += newnearphones
+			self.nearbyphones += self.newnearphones
+			self.plotPhones()
+			
 
 	def check_phone_in_neighbours(self):			
 		ids = [phone.id for phone in self.nearbyphones]
@@ -82,6 +88,23 @@ class Space:
 		id1, pos1x, pos1y = self.getphonedata(self.startid)
 		id2, pos2x, pos2y = self.getphonedata(self.endid)
 		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y, 'Iterations:', self.iters)
+	
+	def plotPhones(self):
+		pos = [p.sendpos() for p in self.phones]
+		print("pos", pos)
+		x_start = [self.phones[self.startid].sendpos()[1]]
+		y_start = [self.phones[self.startid].sendpos()[2]]
+		x_end = [self.phones[self.endid].sendpos()[1]]
+		y_end = [self.phones[self.endid].sendpos()[2]]
+		x = [p[1] for p in pos]
+		y = [p[2] for p in pos]
+		x_newnear = [phone.sendpos()[1] for phone in self.newnearphones]
+		y_newnear = [phone.sendpos()[2] for phone in self.newnearphones]		
+		plt.scatter(x, y, color = 'black', marker='.')
+		plt.scatter(x_newnear, y_newnear, color = 'green', marker='+')
+		plt.scatter(x_start, y_start, color = 'blue', marker='$s$')
+		plt.scatter(x_end, y_end, color = 'red',marker='$e$')
+		plt.show()
 
 class Phone:
     def __init__(self, id, x, y):
@@ -91,8 +114,8 @@ class Phone:
         return self.id, self.pos['x'], self.pos['y']
 
 def run():
-	if len(sys.argv) != 7: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'endid', 'connectiondistance', 'limx', 'limy'); exit()
-	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+	if len(sys.argv) != 6: print('Usage:', sys.argv[0], 'phonecount', 'startid', 'endid', 'connectiondistance', 'spread'); exit()
+	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
 
 if __name__ == "__main__": run()
 

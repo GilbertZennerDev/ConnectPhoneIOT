@@ -90,7 +90,7 @@ bool	goodDistance(Phone currentphone, Phone nearphone, double distanceLimit)
 		x = nearPos.x - currentPos.x;
 		y = nearPos.y - currentPos.y;
 		z = nearPos.z - currentPos.z;
-		distance = (sqrt(x * x + y * y + z * z));
+		distance = (sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2)));
 		return (distance <= distanceLimit);
 }
 
