@@ -76,6 +76,18 @@ void Phone::addNeighbours(vector<Phone *>newneighbours)
 		neighbours.push_back(newneighbours[i]);
 }
 
+//============================================================
+
+typedef struct s_data
+{
+	unsigned int		limit;
+	unsigned int		spread;
+	unsigned int		startid;
+	unsigned int		endid;
+	unsigned int		maxDistance;
+	vector<Phone *>		phones;
+}	t_data;
+
 bool	goodDistance(Phone currentphone, Phone nearphone, double distanceLimit)
 {
 		int		x;
@@ -145,7 +157,7 @@ bool	nearANYNearPhone(Phone currentPhone, const vector<Phone *> &nearbyphones, u
 	return (false);
 }
 
-void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> &phones, unsigned int maxDistance)
+void	trackpath(t_data &data)
 {
 		int				i;
 		unsigned int	iters;
@@ -153,20 +165,20 @@ void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> &phones
 		vector<Phone *> nearbyphones;
 
 		iters = 0;
-		printPhonePos(*phones[startid]);
-		printPhonePos(*phones[endid]);
-		nearbyphones.push_back(phones[startid]);
-		while (!check_phone_in_neighbours(nearbyphones, endid))
+		printPhonePos(*data.phones[data.startid]);
+		printPhonePos(*data.phones[data.endid]);
+		nearbyphones.push_back(data.phones[data.startid]);
+		while (!check_phone_in_neighbours(nearbyphones, data.endid))
 		{
 			i = -1;
 			newphones.clear();
 			cout << "iteration: " << ++iters << "\n";
-			while (++i < phones.size())
+			while (++i < data.phones.size())
 			{
-				if (!idInArr(phones[i]->getId(), nearbyphones) && nearANYNearPhone(*phones[i], nearbyphones, maxDistance))
+				if (!idInArr(data.phones[i]->getId(), nearbyphones) && nearANYNearPhone(*data.phones[i], nearbyphones, data.maxDistance))
 				{
-					newphones.push_back(phones[i]);
-					phones.erase(phones.begin() + i); //this should remove that phone from phones and make next iterations faster.
+					newphones.push_back(data.phones[i]);
+					data.phones.erase(data.phones.begin() + i);
 					i--;
 				}
 			}
@@ -185,42 +197,73 @@ void	trackpath(unsigned int startid, unsigned int endid, vector<Phone *> &phones
 				}
 			}
 		}
+		/*i = -1;
+		while (++i < nearbyphones.size() - 1)
+		{
+			delete nearbyphones[i];
+		}
+		i = -1;
+		while (++i < newphones.size() - 1)
+		{
+			delete newphones[i];
+		}*/
 }
 
-void initPhones(int *i, vector<Phone *> &Phones, unsigned int limit, unsigned int spread)
+void initPhones(t_data &data)//vector<Phone *> &Phones, unsigned int limit, unsigned int spread)
 {
-	*i = -1;
-	while (++(*i) < limit)
-		Phones.push_back(new Phone(*i, spread));
+	int i;
+
+	i = -1;
+	data.phones.clear();
+	while (++i < data.limit)
+		data.phones.push_back(new Phone(i, data.spread));
 }
 
-void deletePhones(int i, vector<Phone *> &Phones)
+void deletePhones(vector<Phone *> &Phones)
 {
-	cout << "debug i:" << i << "\n";
-	while (--i > -1)
+	int i;
+
+	i = -1;
+	while (++i < Phones.size() - 0)
 		delete Phones[i];
+}
+
+bool checks(int ac, char **av, t_data &data)
+{
+	bool error;
+
+	try{
+		data.limit = atoi(av[1]);
+		data.startid = atoi(av[2]);
+		data.endid = atoi(av[3]);
+		data.maxDistance  = atoi(av[4]);
+		data.spread = atoi(av[5]);
+		error = false;
+		if (data.limit < 2) error = true;
+		if (data.startid < 0 || data.startid > data.limit - 1) error = true;
+		if (data.endid < 0 || data.endid > data.limit - 1) error = true;
+		if (data.maxDistance <= 0) error = true;
+		if (data.spread <= 0) error = true;
+		if (error) cout << "Error found.\n";
+		if (error) return (false);
+	}
+	catch(exception e)
+	{
+		cout << "Error" << "\n";
+		return (false);
+	}
+	return (true);
 }
 
 int main(int ac, char **av)
 {
-	int					i;
-	unsigned int		limit;
-	unsigned int		spread;
-	unsigned int		startid;
-	unsigned int		endid;
-	unsigned int		maxDistance;
-	vector<Phone *>		Phones;
+	t_data				data;
 
-	i = -1;
 	srand(time(NULL));
-//	if (ac != 4) exit(1);
-	limit = atoi(av[1]);
-	spread = atoi(av[2]);
-	startid = atoi(av[3]);
-	endid = atoi(av[4]);
-	maxDistance  = atoi(av[5]);
-	initPhones(&i, Phones, limit, spread);
-	trackpath(0, endid, Phones, maxDistance);
-	deletePhones(i, Phones);
+	if (ac != 6){ cout << "Usage: " << av[0] << " phonecount startid endid connectiondistance spread"; return (1);};
+	if (!checks(ac, av, data)) return (1);
+	initPhones(data);
+	trackpath(data);
+	deletePhones(data.phones);
     return (0);
 }
