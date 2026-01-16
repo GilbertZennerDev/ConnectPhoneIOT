@@ -1,7 +1,7 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    iot.py                                             :+:      :+:    :+:    #
+#    app.py                                             :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: gzenner <gzenner@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
@@ -61,9 +61,8 @@ class Space:
 		self.nearbyphones = [self.phones[self.startid]]
 		while not self.check_phone_in_neighbours() and samelen():
 			self.iters += 1
-			print(self.iters)
+			print("Iteration #", self.iters)
 			self.newnearphones = [phone for phone in self.phones if phone not in self.nearbyphones and self.near(phone)]
-			print('newphones', len(self.newnearphones))
 			if not len(self.newnearphones) and not self.check_phone_in_neighbours():
 				print('No new phones reachable and searched phone cannot be found'); exit()
 			self.nearbyphones += self.newnearphones
@@ -82,14 +81,12 @@ class Space:
 			if id == endid: return id, posx, posy
 
 	def find_phone(self):
-		print('finding phone')
 		id1, pos1x, pos1y = self.getphonedata(self.startid)
 		id2, pos2x, pos2y = self.getphonedata(self.endid)
 		print(id1, 'at pos', pos1x, pos1y, 'found', id2, 'at pos', pos2x, pos2y, 'Iterations:', self.iters)
 	
 	def plotPhones(self):
 		pos = [p.sendpos() for p in self.phones]
-		print("pos", pos)
 		x_start = [self.phones[self.startid].sendpos()[1]]
 		y_start = [self.phones[self.startid].sendpos()[2]]
 		x_end = [self.phones[self.endid].sendpos()[1]]
@@ -116,14 +113,3 @@ def run():
 	space = Space(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
 
 if __name__ == "__main__": run()
-
-'''
-distance = 5
-near = lambda currentphone, startphone: abs(startphone.pos['x'] - currentphone.pos['x']) < distance or abs(startphone.pos['y'] - currentphone.pos['y']) < distance
-p1 = Phone(1)
-p2 = Phone(2)
-id1, pos1x, pos1y = p1.sendpos()
-id2, pos2x, pos2y = p2.sendpos()
-print(id1, pos1x, pos1y)
-print(id2, pos2x, pos2y)
-print(near(p1, p2))'''
